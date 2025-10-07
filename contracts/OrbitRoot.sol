@@ -6,7 +6,7 @@ import "./Orbit.sol";
 import "./utils/Controllable.sol";
 
 contract OrbitRoot is Ownable, Controllable {
-    bytes32 private constant ROOT_NODE = bytes32(0);
+    bytes32 private immutable ROOT_NODE;
 
     bytes4 private constant INTERFACE_META_ID =
         bytes4(keccak256("supportsInterface(bytes4)"));
@@ -16,16 +16,20 @@ contract OrbitRoot is Ownable, Controllable {
     Orbit public orbit;
     mapping(bytes32 => bool) public locked;
 
-    constructor(Orbit _orbit) {
-        require(address(_orbit) != address(0), "OrbitRoot: orbit cannot be zero address");
+    constructor(Orbit _orbit, bytes32 _node) {
+        require(
+            address(_orbit) != address(0),
+            "OrbitRoot: orbit cannot be zero address"
+        );
         orbit = _orbit;
+        ROOT_NODE = _node;
     }
 
-    function setSubnodeOwner(bytes32 label, address owner)
-        external
-        onlyController
-    {
-        require(!locked[label]);
+    function setSubnodeOwner(
+        bytes32 label,
+        address owner
+    ) external onlyController {
+        require(!locked[label], "Cant allow locked label");
         orbit.setSubnodeOwner(ROOT_NODE, label, owner);
     }
 
@@ -38,11 +42,9 @@ contract OrbitRoot is Ownable, Controllable {
         locked[label] = true;
     }
 
-    function supportsInterface(bytes4 interfaceID)
-        external
-        pure
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceID
+    ) external pure returns (bool) {
         return interfaceID == INTERFACE_META_ID;
     }
 }

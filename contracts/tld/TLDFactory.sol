@@ -15,6 +15,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
  * @notice Main TLD factory that uses all modules
  * @dev Optimized to stay under 24KB by using external modules
  */
+import "hardhat/console.sol";
+
 contract TLDFactory is
     Initializable,
     ERC721Upgradeable,
@@ -50,7 +52,7 @@ contract TLDFactory is
         auctionModule = TLDAuctionModule(_auction);
         revenueModule = TLDRevenueModule(_revenue);
         registrarFactory = TLDRegistrarFactory(_registrar);
-        tldFee = 1000 ether;
+        tldFee = 1 ether;
         MIN_DURATION = 365 days;
         GRACE_PERIOD = 30 days;
     }
@@ -75,13 +77,14 @@ contract TLDFactory is
 
         uint256 id = ++tokenIdCounter;
 
-        // Deploy registrar via factory module
+        // // Deploy registrar via factory module
         address registrar = registrarFactory.deployRegistrar(
             id,
             lower,
             msg.sender
         );
 
+        console.log(registrar);
         // Store in storage module
         storageModule.createTLD(
             id,
@@ -99,6 +102,7 @@ contract TLDFactory is
 
         _safeMint(msg.sender, id);
         emit TLDCreated(id, lower, msg.sender);
+        console.log("ID", id);
         return id;
     }
 

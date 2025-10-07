@@ -1,0 +1,1158 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0xB8229fbCADba10fEa461cE19B8758465296289c3",
+      "txHash": "0xbb1ca7dc66a8e05f136e49c32f46744224984d01d96126463c4d3319ad4773de",
+      "kind": "uups"
+    },
+    {
+      "address": "0x9f7220c65ED53bDddbAD7737BA9f774F74D601DF",
+      "txHash": "0x50b70b49220ea172202ffaf66c66cf2c0f3fedaf0ead01cb9e8b8b5ba826eecd",
+      "kind": "uups"
+    },
+    {
+      "address": "0x2cCbb23D227aaE7f6854Ec5636C72bF88ECb5C8d",
+      "txHash": "0xf1f176efa511e9edc29301b060423d244acd71d0e3d67dd10beeab4eae043bc0",
+      "kind": "uups"
+    },
+    {
+      "address": "0xE190c0E4b466240c3ccc749Ad7c87c5e6b10F24E",
+      "txHash": "0xb5726265aea933df29921cabc73024ab9445debf7eeafed010c1fcbec431bf82",
+      "kind": "uups"
+    },
+    {
+      "address": "0xa01B13C0f37cDf7dDc2e6D5C08A724E5Dc7a99A6",
+      "txHash": "0x95e18b81f33add3128339a1274afbfc1c22e3c7f18b9f7df4539f18a1344d1f4",
+      "kind": "uups"
+    },
+    {
+      "address": "0x7EA2Ec4556b2D239Fa466b3a456BDCBED7ae790b",
+      "txHash": "0xf78ff2e4418a360645d9d59499a463880572e2c9366764f64ead5bb947170ef3",
+      "kind": "uups"
+    },
+    {
+      "address": "0xd5027c7223785c0eC6b45EE9c358950d49d3E451",
+      "txHash": "0x176975a524f227d238e7125d838248a29704e63e587da044cfb14cde90788096",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "ec9e7b86f44f64c482946614c7f8fef678043ee0731df4f368e6c0bcbfe480f6": {
+      "address": "0x8167E31021899361C3625917608C5C074B8Cc9c3",
+      "txHash": "0xb3982f7fef1b9722b8ceac4d4ae7f3a26d931e6d5222194073893538847206b7",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "storageModule",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(TLDStorage)25135",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:26"
+          },
+          {
+            "label": "auctionModule",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(TLDAuctionModule)21860",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:27"
+          },
+          {
+            "label": "revenueModule",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(TLDRevenueModule)24633",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:28"
+          },
+          {
+            "label": "registrarFactory",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(TLDRegistrarFactory)24100",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:29"
+          },
+          {
+            "label": "tldFee",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:31"
+          },
+          {
+            "label": "MIN_DURATION",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:32"
+          },
+          {
+            "label": "GRACE_PERIOD",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:33"
+          },
+          {
+            "label": "tokenIdCounter",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:34"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ERC721Storage)240_storage": {
+            "label": "struct ERC721Upgradeable.ERC721Storage",
+            "members": [
+              {
+                "label": "_name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_symbol",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "_owners",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "_balances",
+                "type": "t_mapping(t_address,t_uint256)",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "_tokenApprovals",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "_operatorApprovals",
+                "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(TLDAuctionModule)21860": {
+            "label": "contract TLDAuctionModule",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDRegistrarFactory)24100": {
+            "label": "contract TLDRegistrarFactory",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDRevenueModule)24633": {
+            "label": "contract TLDRevenueModule",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDStorage)25135": {
+            "label": "contract TLDStorage",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ERC721": [
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:27",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:30",
+              "offset": 0,
+              "slot": "1"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_owners",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:32",
+              "offset": 0,
+              "slot": "2"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:34",
+              "offset": 0,
+              "slot": "3"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_tokenApprovals",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:36",
+              "offset": 0,
+              "slot": "4"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_operatorApprovals",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:38",
+              "offset": 0,
+              "slot": "5"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "3431feb6d8829c1e6764ba32a2713fbd9e79572e21c55607f7cdae28b31d0378": {
+      "address": "0xc12957F438136D9C1Ff03DdDd967F51368d3e82B",
+      "txHash": "0x8e06cba1c5df0f36e229c0fee17bd078654236890b802a16f2323225d3ee6016",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "storageModule",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(TLDStorage)12156",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:26"
+          },
+          {
+            "label": "auctionModule",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(TLDAuctionModule)9418",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:27"
+          },
+          {
+            "label": "revenueModule",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(TLDRevenueModule)11654",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:28"
+          },
+          {
+            "label": "registrarFactory",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(TLDRegistrarFactory)11121",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:29"
+          },
+          {
+            "label": "tldFee",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:31"
+          },
+          {
+            "label": "MIN_DURATION",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:32"
+          },
+          {
+            "label": "GRACE_PERIOD",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:33"
+          },
+          {
+            "label": "tokenIdCounter",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:34"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ERC721Storage)240_storage": {
+            "label": "struct ERC721Upgradeable.ERC721Storage",
+            "members": [
+              {
+                "label": "_name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_symbol",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "_owners",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "_balances",
+                "type": "t_mapping(t_address,t_uint256)",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "_tokenApprovals",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "_operatorApprovals",
+                "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(TLDAuctionModule)9418": {
+            "label": "contract TLDAuctionModule",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDRegistrarFactory)11121": {
+            "label": "contract TLDRegistrarFactory",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDRevenueModule)11654": {
+            "label": "contract TLDRevenueModule",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDStorage)12156": {
+            "label": "contract TLDStorage",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ERC721": [
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:27",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:30",
+              "offset": 0,
+              "slot": "1"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_owners",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:32",
+              "offset": 0,
+              "slot": "2"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:34",
+              "offset": 0,
+              "slot": "3"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_tokenApprovals",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:36",
+              "offset": 0,
+              "slot": "4"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_operatorApprovals",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:38",
+              "offset": 0,
+              "slot": "5"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "c6b7cec3adbd0ad878662cee68a764207aa3a1483fa364fdf7ee8f77ac018b75": {
+      "address": "0x8379729ba7445Fb3ad6700b1510F038DF5b11af4",
+      "txHash": "0xabaf7be60a55aa35b177a121b2b2cdfa06d50963c76ea490d95ae3c2458752d1",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "storageModule",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(TLDStorage)12106",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:26"
+          },
+          {
+            "label": "auctionModule",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(TLDAuctionModule)9418",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:27"
+          },
+          {
+            "label": "revenueModule",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(TLDRevenueModule)11604",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:28"
+          },
+          {
+            "label": "registrarFactory",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(TLDRegistrarFactory)11071",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:29"
+          },
+          {
+            "label": "tldFee",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:31"
+          },
+          {
+            "label": "MIN_DURATION",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:32"
+          },
+          {
+            "label": "GRACE_PERIOD",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:33"
+          },
+          {
+            "label": "tokenIdCounter",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:34"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ERC721Storage)240_storage": {
+            "label": "struct ERC721Upgradeable.ERC721Storage",
+            "members": [
+              {
+                "label": "_name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_symbol",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "_owners",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "_balances",
+                "type": "t_mapping(t_address,t_uint256)",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "_tokenApprovals",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "_operatorApprovals",
+                "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(TLDAuctionModule)9418": {
+            "label": "contract TLDAuctionModule",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDRegistrarFactory)11071": {
+            "label": "contract TLDRegistrarFactory",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDRevenueModule)11604": {
+            "label": "contract TLDRevenueModule",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDStorage)12106": {
+            "label": "contract TLDStorage",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ERC721": [
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:27",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:30",
+              "offset": 0,
+              "slot": "1"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_owners",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:32",
+              "offset": 0,
+              "slot": "2"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:34",
+              "offset": 0,
+              "slot": "3"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_tokenApprovals",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:36",
+              "offset": 0,
+              "slot": "4"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_operatorApprovals",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:38",
+              "offset": 0,
+              "slot": "5"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "38ecb1362362817cb0afd5fcfaf07573062279fc1ee4c39a5ab6d2d7aadedf72": {
+      "address": "0x36b9Dfb95D9549AC95eba36F6afA9E174672C295",
+      "txHash": "0x1d51591b2d98981fc4bf9e307f9b84a23bc96d493c2aca20b51340f2760eb738",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "storageModule",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(TLDStorage)12140",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:28"
+          },
+          {
+            "label": "auctionModule",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(TLDAuctionModule)9418",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:29"
+          },
+          {
+            "label": "revenueModule",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_contract(TLDRevenueModule)11638",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:30"
+          },
+          {
+            "label": "registrarFactory",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_contract(TLDRegistrarFactory)11094",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:31"
+          },
+          {
+            "label": "tldFee",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:33"
+          },
+          {
+            "label": "MIN_DURATION",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:34"
+          },
+          {
+            "label": "GRACE_PERIOD",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:35"
+          },
+          {
+            "label": "tokenIdCounter",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256",
+            "contract": "TLDFactory",
+            "src": "contracts/tld/TLDFactory.sol:36"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ERC721Storage)240_storage": {
+            "label": "struct ERC721Upgradeable.ERC721Storage",
+            "members": [
+              {
+                "label": "_name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_symbol",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "_owners",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "_balances",
+                "type": "t_mapping(t_address,t_uint256)",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "_tokenApprovals",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "_operatorApprovals",
+                "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(TLDAuctionModule)9418": {
+            "label": "contract TLDAuctionModule",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDRegistrarFactory)11094": {
+            "label": "contract TLDRegistrarFactory",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDRevenueModule)11638": {
+            "label": "contract TLDRevenueModule",
+            "numberOfBytes": "20"
+          },
+          "t_contract(TLDStorage)12140": {
+            "label": "contract TLDStorage",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ERC721": [
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:27",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:30",
+              "offset": 0,
+              "slot": "1"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_owners",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:32",
+              "offset": 0,
+              "slot": "2"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:34",
+              "offset": 0,
+              "slot": "3"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_tokenApprovals",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:36",
+              "offset": 0,
+              "slot": "4"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_operatorApprovals",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:38",
+              "offset": 0,
+              "slot": "5"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

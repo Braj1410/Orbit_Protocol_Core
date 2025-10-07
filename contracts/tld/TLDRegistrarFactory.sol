@@ -5,6 +5,7 @@ import "../Orbit.sol";
 import "../OrbitRoot.sol";
 import "./TLDRegistrar.sol";
 import "../utils/Ownable.sol";
+import "../ERC1967Proxy.sol";
 
 /**
  * @title TLDRegistrarFactory
@@ -16,13 +17,13 @@ contract TLDRegistrarFactory is Ownable {
     OrbitRoot public immutable orbitRoot;
     address public tldFactory;
 
-    mapping(uint256 => address) public registrars; // tokenId => registrar
+    mapping(uint256 => address) public registrars; // tokenId => proxy
     mapping(address => bool) public isRegistrar;
 
     event RegistrarDeployed(
         uint256 indexed tokenId,
         string name,
-        address registrar,
+        address proxy,
         address owner
     );
 
@@ -41,7 +42,7 @@ contract TLDRegistrarFactory is Ownable {
     }
 
     /**
-     * @notice Deploy a new registrar for a TLD
+     * @notice Deploy a new proxy for a TLD
      */
     function deployRegistrar(
         uint256 tokenId,
@@ -56,21 +57,29 @@ contract TLDRegistrarFactory is Ownable {
 
         TLDRegistrar registrar = new TLDRegistrar();
 
-        registrar.initialize(orbit, node, tldFactory, tldOwner);
+        bytes memory initData = abi.encodeWithSelector(
+            TLDRegistrar.initialize.selector,
+            orbit,
+            node,
+            tldFactory,
+            tldOwner
+        );
+
+        ERC1967Proxy proxy = new ERC1967Proxy(address(registrar), initData);
 
         // Register with OrbitRoot
-        orbitRoot.setSubnodeOwner(label, address(registrar));
+        orbitRoot.setSubnodeOwner(label, address(proxy));
 
-        registrars[tokenId] = address(registrar);
-        isRegistrar[address(registrar)] = true;
+        registrars[tokenId] = address(proxy);
+        isRegistrar[address(proxy)] = true;
 
-        emit RegistrarDeployed(tokenId, tldName, address(registrar), tldOwner);
+        emit RegistrarDeployed(tokenId, tldName, address(proxy), tldOwner);
 
-        return address(registrar);
+        return address(proxy);
     }
 
     /**
-     * @notice Update registrar configuration
+     * @notice Update proxy configuration
      * @dev Note: TLDRegistrar fees are immutable, this is a placeholder
      */
     function updateRegistrarFee(
@@ -83,20 +92,20 @@ contract TLDRegistrarFactory is Ownable {
     }
 
     /**
-     * @notice Transfer registrar ownership
+     * @notice Transfer proxy ownership
      */
     function transferRegistrarOwnership(
         uint256 tokenId,
         address newOwner
     ) external onlyFactory {
-        address registrar = registrars[tokenId];
-        require(registrar != address(0), "No registrar");
+        address proxy = registrars[tokenId];
+        require(proxy != address(0), "No proxy");
 
-        TLDRegistrar(registrar).transferOwnership(newOwner);
+        TLDRegistrar(proxy).transferOwnership(newOwner);
     }
 
     /**
-     * @notice Get registrar for a TLD
+     * @notice Get proxy for a TLD
      */
     function getRegistrar(uint256 tokenId) external view returns (address) {
         return registrars[tokenId];

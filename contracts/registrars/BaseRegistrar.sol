@@ -43,7 +43,13 @@ contract BaseRegistrar is
             isApprovedForAll(owner, spender));
     }
 
-    function initialize(Orbit _orbit, bytes32 _baseNode) public initializer {
+    function initialize(
+        Orbit _orbit,
+        bytes32 _baseNode,
+        address _owner
+    ) public initializer {
+        __ERC721_init("Cronos ID Domain", "ORBIT");
+        __Ownable_init(_owner);
         require(
             address(_orbit) != address(0),
             "BaseRegistrar: orbit cannot be zero address"
@@ -54,8 +60,6 @@ contract BaseRegistrar is
         );
         orbit = _orbit;
         baseNode = _baseNode;
-        __ERC721_init("Cronos ID Domain", "ORBIT");
-        __Ownable_init(msg.sender);
     }
 
     modifier live() {

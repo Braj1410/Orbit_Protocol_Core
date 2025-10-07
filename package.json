@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "fork": "npx hardhat node --fork https://rpc.vvs.finance",
-    "deploy": "npx hardhat run ./scripts/deploy-main.ts"
+    "deploy": "npx hardhat run ./scripts/deploy-main.ts",
+    "test-main-local": " npx hardhat test ./test/TLDComplete.test.ts",
+    "test-main-fork": "npx hardhat test --network fg"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +31,7 @@
     "ethers": "^6.15.0",
     "hardhat": "^2.26.3",
     "hardhat-gas-reporter": "^2.3.0",
+    "hardhat-tracer": "^3.4.0",
     "solidity-coverage": "^0.8.16",
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",
