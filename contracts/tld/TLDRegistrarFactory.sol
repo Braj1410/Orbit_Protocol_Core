@@ -4,7 +4,6 @@ pragma solidity ^0.8.4;
 import "../Orbit.sol";
 import "../OrbitRoot.sol";
 import "./TLDRegistrar.sol";
-import "../utils/Ownable.sol";
 import "../ERC1967Proxy.sol";
 
 /**

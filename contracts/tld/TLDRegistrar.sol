@@ -3,7 +3,6 @@ pragma solidity ^0.8.4;
 
 import "../Orbit.sol";
 import "../registrars/BaseRegistrar.sol";
-import "../utils/Ownable.sol";
 import "./ITLDFactory.sol";
 
 /**
@@ -138,7 +137,7 @@ contract TLDRegistrar is BaseRegistrar {
         address registrant
     ) public view returns (uint256) {
         // Get base fee from factory
-        (, , , uint256 baseFee, , , ) = ITLDFactory(tldFactory).getTLD(
+        (, , , uint256 baseFee, , , , , , , ) = ITLDFactory(tldFactory).getTLD(
             tldTokenId
         );
 
@@ -181,7 +180,7 @@ contract TLDRegistrar is BaseRegistrar {
         returns (uint256 userFee, uint256 protocolFee, uint256 totalFee)
     {
         // Get base fee from factory
-        (, , , uint256 baseFee, , , ) = ITLDFactory(tldFactory).getTLD(
+        (, , , uint256 baseFee, , , , , , , ) = ITLDFactory(tldFactory).getTLD(
             tldTokenId
         );
 

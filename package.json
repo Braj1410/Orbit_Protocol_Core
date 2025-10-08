@@ -8,7 +8,7 @@
     "fork": "npx hardhat node --fork https://rpc.vvs.finance",
     "deploy": "npx hardhat run ./scripts/deploy-main.ts",
     "test-main-local": " npx hardhat test ./test/TLDComplete.test.ts",
-    "test-main-fork": "npx hardhat test --network fg"
+    "test-main-fork": "npx hardhat test ./test/TLDComplete.test.ts --network fg"
   },
   "keywords": [],
   "author": "",

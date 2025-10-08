@@ -221,12 +221,12 @@ describe("TLD Complete System Test", function () {
 
       // Verify TLD data
       // Exception for now since tracer is enabled
-      //const tld = await contracts.storage.getTLD(1);
+      const tld = await contracts.storage.getTLD(1);
 
-      // expect(tld.name).to.equal(tldName);
-      // expect(tld.owner).to.equal(user1.address);
-      // expect(tld.registrationFee).to.equal(regFee);
-      // expect(tld.isActive).to.be.true;
+      expect(ethers.decodeBytes32String(tld.name)).to.equal(tldName);
+      expect(tld.owner).to.equal(user1.address);
+      expect(tld.registrationFee).to.equal(regFee);
+      expect(tld.isActive).to.be.true;
 
       // Verify NFT ownership
       expect(await contracts.factory.ownerOf(1)).to.equal(user1.address);
@@ -255,7 +255,7 @@ describe("TLD Complete System Test", function () {
         });
 
       const tld = await contracts.storage.getTLD(2);
-      expect(tld.name).to.equal("btc");
+      expect(ethers.decodeBytes32String(tld.name)).to.equal("btc");
       expect(tld.owner).to.equal(user2.address);
 
       console.log("    ✅ Multiple TLDs working");
@@ -309,88 +309,101 @@ describe("TLD Complete System Test", function () {
     });
   });
 
-  // describe("TLD Transfer", function () {
-  //   it("Should transfer TLD via NFT transfer", async function () {
-  //     await contracts.factory
-  //       .connect(user1)
-  //       .transferFrom(user1.address, user2.address, 1);
+  describe("TLD Transfer", function () {
+    it("Should transfer TLD via NFT transfer", async function () {
+      const owner = await contracts.factory.owner();
 
-  //     expect(await contracts.factory.ownerOf(1)).to.equal(user2.address);
+      const registrarAddress = await contracts.registrarFactory.getRegistrar(1);
 
-  //     const tld = await contracts.storage.getTLD(1);
-  //     expect(tld.owner).to.equal(user2.address);
+      const Registrar = await ethers.getContractAt(
+        "TLDRegistrar",
+        registrarAddress
+      );
 
-  //     console.log("    ✅ TLD transfer working");
-  //   });
-  // });
+      console.log("Registrar:", registrarAddress);
 
-  // describe("Auction System", function () {
-  //   it("Should start auction for expired TLD", async function () {
-  //     // Fast forward time to expire TLD
-  //     const tld = await contracts.storage.getTLD(2);
-  //     const expiry = Number(tld.expirationTime) + 31 * 24 * 60 * 60; // Past grace period
+      console.log("Owner:", await Registrar.owner());
 
-  //     await ethers.provider.send("evm_setNextBlockTimestamp", [expiry]);
-  //     await ethers.provider.send("evm_mine");
+      await contracts.factory
+        .connect(user1)
+        .transferFrom(user1.address, user2.address, 1);
 
-  //     await contracts.factory.checkExpiry(2);
+      expect(await contracts.factory.ownerOf(1)).to.equal(user2.address);
 
-  //     const updatedTld = await contracts.storage.getTLD(2);
-  //     expect(updatedTld.isActive).to.be.false;
+      const tld = await contracts.factory.getTLD(1);
+      expect(tld.owner).to.equal(user2.address);
 
-  //     console.log("    ✅ Expiration and auction start working");
-  //   });
+      console.log("    ✅ TLD transfer working");
+    });
+  });
 
-  //   it("Should allow bidding on expired TLD", async function () {
-  //     await contracts.factory
-  //       .connect(user1)
-  //       .bid(2, { value: ethers.parseEther("1500") });
+  describe("Auction System", function () {
+    it("Should start auction for expired TLD", async function () {
+      // Fast forward time to expire TLD
+      const tld = await contracts.storage.getTLD(2);
+      const expiry = Number(tld.expirationTime) + 31 * 24 * 60 * 60; // Past grace period
 
-  //     const auction = await contracts.auction.getAuction(2);
-  //     expect(auction.currentBidder).to.equal(user1.address);
+      await ethers.provider.send("evm_setNextBlockTimestamp", [expiry]);
+      await ethers.provider.send("evm_mine");
 
-  //     console.log("    ✅ Auction bidding working");
-  //   });
-  // });
+      await contracts.factory.checkExpiry(2);
 
-  // describe("System Integration", function () {
-  //   it("Should have all modules properly connected", async function () {
-  //     const factoryAddr =
-  //       contracts.factory.target || (await contracts.factory.getAddress());
+      const updatedTld = await contracts.storage.getTLD(2);
+      expect(updatedTld.isActive).to.be.false;
 
-  //     expect(await contracts.storage.authorized(factoryAddr)).to.be.true;
-  //     expect(await contracts.auction.factory()).to.equal(factoryAddr);
-  //     expect(await contracts.revenue.factory()).to.equal(factoryAddr);
-  //     expect(await contracts.registrarFactory.tldFactory()).to.equal(
-  //       factoryAddr
-  //     );
+      console.log("    ✅ Expiration and auction start working");
+    });
 
-  //     console.log("    ✅ All modules connected correctly");
-  //   });
+    it("Should allow bidding on expired TLD", async function () {
+      await contracts.factory
+        .connect(user1)
+        .bid(2, { value: ethers.parseEther("1500") });
 
-  //   // it("Should track total TLDs created", async function () {
-  //   //   const totalSupply = await contracts.factory.;
-  //   //   expect(totalSupply).to.be.gt(0);
+      const auction = await contracts.auction.getAuction(2);
+      expect(auction.currentBidder).to.equal(user1.address);
 
-  //   //   console.log("✅ NFT tracking working");
-  //   // });
-  // });
+      console.log("    ✅ Auction bidding working");
+    });
+  });
 
-  // describe("Gas Usage", function () {
-  //   it("Should have reasonable gas costs", async function () {
-  //     const tx = await contracts.factory
-  //       .connect(owner)
-  //       .createTLD("gas", ethers.parseEther("0.01"), 365 * 24 * 60 * 60, {
-  //         value: ethers.parseEther("1000"),
-  //       });
+  describe("System Integration", function () {
+    it("Should have all modules properly connected", async function () {
+      const factoryAddr =
+        contracts.factory.target || (await contracts.factory.getAddress());
 
-  //     const receipt = await tx.wait();
-  //     const gasUsed = receipt?.gasUsed;
+      expect(await contracts.storage.authorized(factoryAddr)).to.be.true;
+      expect(await contracts.auction.factory()).to.equal(factoryAddr);
+      expect(await contracts.revenue.factory()).to.equal(factoryAddr);
+      expect(await contracts.registrarFactory.tldFactory()).to.equal(
+        factoryAddr
+      );
 
-  //     console.log(`    ⛽ TLD creation gas: ${gasUsed?.toString()}`);
-  //     expect(gasUsed).to.be.lt(5000000); // Should be under 5M gas
-  //   });
-  // });
+      console.log("    ✅ All modules connected correctly");
+    });
+
+    it("Should track total TLDs created", async function () {
+      const totalSupply = await contracts.factory.totalSupply();
+      expect(totalSupply).to.be.gt(0);
+
+      console.log("✅ NFT tracking working");
+    });
+  });
+
+  describe("Gas Usage", function () {
+    it("Should have reasonable gas costs", async function () {
+      const tx = await contracts.factory
+        .connect(owner)
+        .createTLD("gas", ethers.parseEther("0.01"), 365 * 24 * 60 * 60, {
+          value: ethers.parseEther("1"),
+        });
+
+      const receipt = await tx.wait();
+      const gasUsed = receipt?.gasUsed;
+
+      console.log(`    ⛽ TLD creation gas: ${gasUsed?.toString()}`);
+      expect(gasUsed).to.be.lt(5000000); // Should be under 5M gas
+    });
+  });
 });
 
 // Run with: npx hardhat test test/TLDComplete.test.js

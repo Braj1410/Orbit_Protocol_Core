@@ -7,7 +7,7 @@ import "./TLDRevenueModule.sol";
 import "./TLDRegistrarFactory.sol";
 import "./ITLDFactory.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 /**
@@ -19,7 +19,7 @@ import "hardhat/console.sol";
 
 contract TLDFactory is
     Initializable,
-    ERC721Upgradeable,
+    ERC721EnumerableUpgradeable,
     OwnableUpgradeable,
     ITLDFactory,
     UUPSUpgradeable
@@ -46,6 +46,7 @@ contract TLDFactory is
         address _registrar
     ) public initializer {
         __ERC721_init("Orbit TLD", "TLD");
+        __ERC721Enumerable_init();
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
         storageModule = TLDStorage(_storage);
@@ -114,7 +115,7 @@ contract TLDFactory is
         require(duration >= MIN_DURATION, "Too short");
         require(msg.value >= tldFee, "Low fee");
 
-        TLDStorage.TLD memory tld = storageModule.getTLD(id);
+        TLD memory tld = storageModule.getTLD(id);
         uint256 newExpiry = tld.expirationTime + duration;
 
         storageModule.updateTLDExpiration(id, newExpiry);
@@ -127,7 +128,7 @@ contract TLDFactory is
      * @notice Check and process expiration
      */
     function checkExpiry(uint256 id) external {
-        TLDStorage.TLD memory tld = storageModule.getTLD(id);
+        TLD memory tld = storageModule.getTLD(id);
 
         if (
             block.timestamp > tld.expirationTime + GRACE_PERIOD && tld.isActive
@@ -187,30 +188,38 @@ contract TLDFactory is
     }
 
     function getTLD(
-        uint256 id
+        uint256 tokenId
     )
         external
         view
         override
         returns (
-            string memory name,
+            bytes32 name,
             address owner,
             address registrar,
+            uint256 creationTime,
             uint256 registrationFee,
             uint256 totalRegistrations,
             uint256 totalRevenue,
-            bool isActive
+            bool isActive,
+            uint256 ownerSharePercentage,
+            uint256 expirationTime,
+            uint256 renewalFee
         )
     {
-        TLDStorage.TLD memory tld = storageModule.getTLD(id);
+        TLD memory tld = storageModule.getTLD(tokenId);
         return (
             tld.name,
             tld.owner,
             tld.registrar,
+            tld.creationTime,
             tld.registrationFee,
             tld.totalRegistrations,
             tld.totalRevenue,
-            tld.isActive
+            tld.isActive,
+            tld.ownerSharePercentage,
+            tld.expirationTime,
+            tld.renewalFee
         );
     }
 
