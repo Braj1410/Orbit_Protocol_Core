@@ -4,16 +4,17 @@ pragma solidity ^0.8.4;
 import "../Orbit.sol";
 import "../OrbitRoot.sol";
 import "./TLDRegistrar.sol";
-import "../ERC1967Proxy.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 /**
  * @title TLDRegistrarFactory
  * @notice Factory for deploying TLD registrars
  * @dev Separated to reduce main factory size
  */
-contract TLDRegistrarFactory is Ownable {
-    Orbit public immutable orbit;
-    OrbitRoot public immutable orbitRoot;
+contract TLDRegistrarFactory is OwnableUpgradeable, UUPSUpgradeable {
+    Orbit public orbit;
+    OrbitRoot public orbitRoot;
     address public tldFactory;
 
     mapping(uint256 => address) public registrars; // tokenId => proxy
@@ -31,7 +32,8 @@ contract TLDRegistrarFactory is Ownable {
         _;
     }
 
-    constructor(Orbit _orbit, OrbitRoot _orbitRoot) {
+    function initialize(Orbit _orbit, OrbitRoot _orbitRoot) public initializer {
+        __Ownable_init(msg.sender);
         orbit = _orbit;
         orbitRoot = _orbitRoot;
     }
@@ -54,27 +56,23 @@ contract TLDRegistrarFactory is Ownable {
         bytes32 rootNode = bytes32(0);
         bytes32 node = keccak256(abi.encodePacked(rootNode, label));
 
-        TLDRegistrar registrar = new TLDRegistrar();
-
-        bytes memory initData = abi.encodeWithSelector(
-            TLDRegistrar.initialize.selector,
+        TLDRegistrar registrar = new TLDRegistrar(
             orbit,
             node,
             tldFactory,
+            address(this),
             tldOwner
         );
 
-        ERC1967Proxy proxy = new ERC1967Proxy(address(registrar), initData);
-
         // Register with OrbitRoot
-        orbitRoot.setSubnodeOwner(label, address(proxy));
+        orbitRoot.setSubnodeOwner(label, address(registrar));
 
-        registrars[tokenId] = address(proxy);
-        isRegistrar[address(proxy)] = true;
+        registrars[tokenId] = address(registrar);
+        isRegistrar[address(registrar)] = true;
 
-        emit RegistrarDeployed(tokenId, tldName, address(proxy), tldOwner);
+        emit RegistrarDeployed(tokenId, tldName, address(registrar), tldOwner);
 
-        return address(proxy);
+        return address(registrar);
     }
 
     /**
@@ -109,4 +107,8 @@ contract TLDRegistrarFactory is Ownable {
     function getRegistrar(uint256 tokenId) external view returns (address) {
         return registrars[tokenId];
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal virtual override {}
 }

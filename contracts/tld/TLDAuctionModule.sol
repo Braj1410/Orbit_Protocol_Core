@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../utils/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "./TLDStorage.sol";
 
 /**
@@ -9,7 +10,7 @@ import "./TLDStorage.sol";
  * @notice Handles TLD auctions for expired domains
  * @dev Separate module to reduce main contract size
  */
-contract TLDAuctionModule is Ownable {
+contract TLDAuctionModule is OwnableUpgradeable, UUPSUpgradeable {
     struct TLDAuction {
         uint256 startTime;
         uint256 endTime;
@@ -28,7 +29,7 @@ contract TLDAuctionModule is Ownable {
     mapping(uint256 => TLDAuction) public auctions;
     mapping(address => uint256) public pendingReturns;
 
-    TLDStorage public immutable storage_;
+    TLDStorage public storage_;
     address public factory;
 
     // Events
@@ -58,7 +59,8 @@ contract TLDAuctionModule is Ownable {
         _;
     }
 
-    constructor(address _storage) {
+    function initialize(address _storage) public initializer {
+        __Ownable_init(msg.sender);
         storage_ = TLDStorage(_storage);
     }
 
@@ -99,7 +101,7 @@ contract TLDAuctionModule is Ownable {
     /**
      * @notice Place a bid on an ongoing auction
      */
-    function bid(uint256 tokenId) external payable {
+    function bid(uint256 tokenId, address bidder) external payable onlyFactory {
         TLDAuction storage auction = auctions[tokenId];
 
         require(auction.startTime > 0, "No auction");
@@ -118,14 +120,14 @@ contract TLDAuctionModule is Ownable {
         }
 
         auction.currentBid = msg.value;
-        auction.currentBidder = msg.sender;
+        auction.currentBidder = bidder;
 
         // Extend auction if bid is near the end
         if (auction.endTime - block.timestamp < AUCTION_EXTENSION) {
             auction.endTime = block.timestamp + AUCTION_EXTENSION;
         }
 
-        emit BidPlaced(tokenId, msg.sender, msg.value);
+        emit BidPlaced(tokenId, bidder, msg.value);
     }
 
     /**
@@ -157,12 +159,12 @@ contract TLDAuctionModule is Ownable {
      * @notice Withdraw pending returns from outbid auctions
      */
     function withdraw() external {
-        uint256 amount = pendingReturns[msg.sender];
+        uint256 amount = pendingReturns[_msgSender()];
         require(amount > 0, "Nothing to withdraw");
 
-        pendingReturns[msg.sender] = 0;
+        pendingReturns[_msgSender()] = 0;
 
-        (bool success, ) = msg.sender.call{value: amount}("");
+        (bool success, ) = _msgSender().call{value: amount}("");
         require(success, "Transfer failed");
     }
 
@@ -200,4 +202,8 @@ contract TLDAuctionModule is Ownable {
     ) external view returns (TLDAuction memory) {
         return auctions[tokenId];
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal virtual override {}
 }

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../utils/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "./structs.sol";
 
 /**
@@ -9,7 +10,7 @@ import "./structs.sol";
  * @notice Centralized storage for TLD data
  * @dev Separate storage contract to reduce main contract size
  */
-contract TLDStorage is Ownable {
+contract TLDStorage is OwnableUpgradeable, UUPSUpgradeable {
     // Core mappings
     mapping(uint256 => TLD) public tlds;
     mapping(string => uint256) public nameToTokenId;
@@ -32,7 +33,9 @@ contract TLDStorage is Ownable {
         _;
     }
 
-    constructor() {}
+    function initialize() public initializer {
+        __Ownable_init(msg.sender);
+    }
 
     // Authorization management
     function authorize(address account) external onlyOwner {
@@ -182,4 +185,8 @@ contract TLDStorage is Ownable {
             result := mload(add(source, 32))
         }
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal virtual override {}
 }

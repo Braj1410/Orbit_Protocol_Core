@@ -2,10 +2,10 @@
 pragma solidity ^0.8.4;
 
 import "./TLDStorage.sol";
-import "../utils/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract TLDAuction is Ownable {
-    TLDStorage public immutable storageModule;
+contract TLDAuction is OwnableUpgradeable {
+    TLDStorage public storageModule;
 
     mapping(uint256 => Auction) public auctions;
 
@@ -25,7 +25,8 @@ contract TLDAuction is Ownable {
         uint256 price
     );
 
-    constructor(address _storage) {
+    function initialize(address _storage) public initializer {
+        __Ownable_init(msg.sender);
         storageModule = TLDStorage(_storage);
     }
 
@@ -56,10 +57,10 @@ contract TLDAuction is Ownable {
             payable(auction.highestBidder).transfer(auction.highestBid);
         }
 
-        auction.highestBidder = msg.sender;
+        auction.highestBidder = _msgSender();
         auction.highestBid = msg.value;
 
-        emit BidPlaced(tokenId, msg.sender, msg.value);
+        emit BidPlaced(tokenId, _msgSender(), msg.value);
     }
 
     function settleAuction(

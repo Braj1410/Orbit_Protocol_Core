@@ -14,6 +14,15 @@ contract OrbitRegistrar is BaseRegistrar {
     bytes32 private constant ORBIT_NODE =
         0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
 
+    constructor(
+        Orbit _orbit,
+        bytes32 _baseNode,
+        address _tldfactory,
+        address _owner,
+        address _registrarFactory
+    )
+        BaseRegistrar(_orbit, _baseNode, _tldfactory, _registrarFactory, _owner)
+    {}
 
     function transferFromWithCalls(
         address from,
@@ -23,7 +32,10 @@ contract OrbitRegistrar is BaseRegistrar {
         bytes[] calldata data,
         bool updateRegistry
     ) external live {
-        require(_isApprovedOrOwner(_msgSender(), id), "OrbitRegistrar: caller is not owner nor approved");
+        require(
+            _isApprovedOrOwner(_msgSender(), id),
+            "OrbitRegistrar: caller is not owner nor approved"
+        );
 
         // transfer ERC721
         _transfer(from, to, id);
@@ -35,7 +47,9 @@ contract OrbitRegistrar is BaseRegistrar {
 
         // clean resolver records
         if (resolver != address(0) && data.length > 0) {
-            bytes32 nodehash = keccak256(abi.encodePacked(ORBIT_NODE, bytes32(id)));
+            bytes32 nodehash = keccak256(
+                abi.encodePacked(ORBIT_NODE, bytes32(id))
+            );
             for (uint256 i = 0; i < data.length; i++) {
                 // check first few bytes are namehash
                 bytes32 txNamehash = bytes32(data[i][4:36]);

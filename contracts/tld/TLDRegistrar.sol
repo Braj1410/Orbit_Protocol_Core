@@ -11,7 +11,6 @@ import "./ITLDFactory.sol";
  * @dev Created by TLDFactory for each TLD
  */
 contract TLDRegistrar is BaseRegistrar {
-    address public tldFactory;
     uint256 public tldTokenId;
     uint256 public registrationFee;
 
@@ -30,20 +29,15 @@ contract TLDRegistrar is BaseRegistrar {
 
     event DomainRenewed(string name, uint256 duration, uint256 fee);
 
-    modifier onlyFactory() {
-        require(msg.sender == tldFactory, "Only factory");
-        _;
-    }
-
-    function initialize(
+    constructor(
         Orbit _orbit,
         bytes32 _baseNode,
-        address _factory,
+        address _tldfactory,
+        address _registrarFactory,
         address _owner
-    ) public initializer {
-        tldFactory = _factory;
-        super.initialize(_orbit, _baseNode, _owner);
-    }
+    )
+        BaseRegistrar(_orbit, _baseNode, _tldfactory, _registrarFactory, _owner)
+    {}
 
     /**
      * @notice Register a domain under this TLD
@@ -70,7 +64,7 @@ contract TLDRegistrar is BaseRegistrar {
 
         // Send revenue to factory for distribution with duration
         if (fee > 0) {
-            ITLDFactory(tldFactory).distributeRevenue{value: fee}(
+            ITLDFactory(_tldfactory).distributeRevenue{value: fee}(
                 tldTokenId,
                 duration
             );
@@ -111,7 +105,7 @@ contract TLDRegistrar is BaseRegistrar {
 
         // Send revenue to factory with duration
         if (fee > 0) {
-            ITLDFactory(tldFactory).distributeRevenue{value: fee}(
+            ITLDFactory(_tldfactory).distributeRevenue{value: fee}(
                 tldTokenId,
                 duration
             );
@@ -137,7 +131,7 @@ contract TLDRegistrar is BaseRegistrar {
         address registrant
     ) public view returns (uint256) {
         // Get base fee from factory
-        (, , , uint256 baseFee, , , , , , , ) = ITLDFactory(tldFactory).getTLD(
+        (, , , uint256 baseFee, , , , , , , ) = ITLDFactory(_tldfactory).getTLD(
             tldTokenId
         );
 
@@ -180,7 +174,7 @@ contract TLDRegistrar is BaseRegistrar {
         returns (uint256 userFee, uint256 protocolFee, uint256 totalFee)
     {
         // Get base fee from factory
-        (, , , uint256 baseFee, , , , , , , ) = ITLDFactory(tldFactory).getTLD(
+        (, , , uint256 baseFee, , , , , , , ) = ITLDFactory(_tldfactory).getTLD(
             tldTokenId
         );
 

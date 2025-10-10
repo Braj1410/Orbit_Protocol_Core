@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../utils/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "./TLDStorage.sol";
 
 /**
@@ -9,8 +10,8 @@ import "./TLDStorage.sol";
  * @notice Handles revenue distribution for TLDs
  * @dev Separate module for revenue management
  */
-contract TLDRevenueModule is Ownable {
-    TLDStorage public immutable storage_;
+contract TLDRevenueModule is OwnableUpgradeable, UUPSUpgradeable {
+    TLDStorage public storage_;
     address public factory;
     address public protocolTreasury;
 
@@ -20,8 +21,8 @@ contract TLDRevenueModule is Ownable {
     mapping(uint256 => uint256) public tldOwnerRevenue;
 
     uint256 public totalProtocolRevenue;
-    uint256 public defaultOwnerShare = 50; // 50%
-    uint256 public protocolShare = 50; // 50%
+    uint256 public defaultOwnerShare;
+    uint256 public protocolShare;
 
     // Events
     event RevenueDistributed(
@@ -41,9 +42,16 @@ contract TLDRevenueModule is Ownable {
         _;
     }
 
-    constructor(address _storage, address _treasury) {
+    function initialize(
+        address _storage,
+        address _treasury
+    ) public initializer {
+        __Ownable_init(msg.sender);
         storage_ = TLDStorage(_storage);
         protocolTreasury = _treasury;
+
+        defaultOwnerShare = 50; // 50%
+        protocolShare = 50; // 50%
     }
 
     function setFactory(address _factory) external onlyOwner {
@@ -194,4 +202,8 @@ contract TLDRevenueModule is Ownable {
         (bool success, ) = protocolTreasury.call{value: balance}("");
         require(success, "Transfer failed");
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal virtual override {}
 }

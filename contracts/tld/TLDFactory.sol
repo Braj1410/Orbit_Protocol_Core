@@ -143,7 +143,7 @@ contract TLDFactory is
      * @notice Bid on expired TLD
      */
     function bid(uint256 id) external payable {
-        auctionModule.bid{value: msg.value}(id);
+        auctionModule.bid{value: msg.value}(id, msg.sender);
     }
 
     /**

@@ -3,26 +3,33 @@ pragma solidity >=0.8.4;
 
 import "../Orbit.sol";
 import "./IBaseRegistrar.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
-contract BaseRegistrar is
-    ERC721Upgradeable,
-    IBaseRegistrar,
-    OwnableUpgradeable
-{
+import "../tld/structs.sol";
+import "hardhat/console.sol";
+
+contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
     Orbit public orbit;
     bytes32 public baseNode;
 
-    mapping(uint256 => uint) expiries;
+    address public _owner;
+    address public _tldfactory;
+    address public _registrarFactory;
 
     // A map of addresses that are authorised to register and renew names.
     mapping(address => bool) public controllers;
+
+    mapping(uint256 => uint) public expiries;
 
     uint256 public constant GRACE_PERIOD = 90 days;
 
     bytes4 private constant RECLAIM_ID =
         bytes4(keccak256("reclaim(uint256,address)"));
+
+    event OwnershipTransferred(
+        address indexedpreviousOwner,
+        address indexed newOwner
+    );
 
     /**
      * v2.1.3 version of _isApprovedOrOwner which calls ownerOf(tokenId) and takes grace period into consideration instead of ERC721.ownerOf(tokenId);
@@ -43,13 +50,13 @@ contract BaseRegistrar is
             isApprovedForAll(owner, spender));
     }
 
-    function initialize(
+    constructor(
         Orbit _orbit,
         bytes32 _baseNode,
-        address _owner
-    ) public initializer {
-        __ERC721_init("Cronos ID Domain", "ORBIT");
-        __Ownable_init(_owner);
+        address tldfactory,
+        address registrarFactory,
+        address owner
+    ) ERC721("BaseRegistrar", "BR") {
         require(
             address(_orbit) != address(0),
             "BaseRegistrar: orbit cannot be zero address"
@@ -60,6 +67,11 @@ contract BaseRegistrar is
         );
         orbit = _orbit;
         baseNode = _baseNode;
+
+        _tldfactory = tldfactory;
+        _owner = owner;
+        _registrarFactory = registrarFactory;
+        //controllers[owner] = true;
     }
 
     modifier live() {
@@ -68,7 +80,24 @@ contract BaseRegistrar is
     }
 
     modifier onlyController() {
-        require(controllers[msg.sender]);
+        require(controllers[_msgSender()]);
+        _;
+    }
+
+    modifier onlyFactory() {
+        require(_msgSender() == _tldfactory, "Only factory");
+        _;
+    }
+
+    modifier onlyOwner() {
+        console.log(_tldfactory);
+        console.log(_msgSender());
+        require(
+            _msgSender() == _owner ||
+                _msgSender() == _tldfactory ||
+                _msgSender() == _registrarFactory,
+            "Ownable: caller is not the owner"
+        );
         _;
     }
 
@@ -80,7 +109,7 @@ contract BaseRegistrar is
      */
     function ownerOf(
         uint256 tokenId
-    ) public view override(IERC721, ERC721Upgradeable) returns (address) {
+    ) public view override(ERC721, IERC721) returns (address) {
         require(
             expiries[tokenId] > block.timestamp,
             "BaseRegistrar: expiries of token is invalid"
@@ -113,6 +142,7 @@ contract BaseRegistrar is
     // Returns true if the specified name is available for registration.
     function available(uint256 id) public view override returns (bool) {
         // Not available if it's registered here or in its grace period.
+
         return expiries[id] + GRACE_PERIOD < block.timestamp;
     }
 
@@ -212,16 +242,21 @@ contract BaseRegistrar is
      * @dev Reclaim ownership of a name in Orbit, if you own it in the registrar.
      */
     function reclaim(uint256 id, address owner) external override live {
-        require(_isApprovedOrOwner(msg.sender, id));
+        require(_isApprovedOrOwner(_msgSender(), id));
         orbit.setSubnodeOwner(baseNode, bytes32(id), owner);
     }
 
     function supportsInterface(
         bytes4 interfaceID
-    ) public pure override(ERC721Upgradeable, IERC165) returns (bool) {
+    ) public pure override(ERC721Enumerable, IERC165) returns (bool) {
         return
             interfaceID == type(IERC165).interfaceId ||
             interfaceID == type(IERC721).interfaceId ||
             interfaceID == RECLAIM_ID;
+    }
+
+    function transferOwnership(address newOwner) public onlyOwner {
+        _owner = newOwner;
+        emit OwnershipTransferred(_owner, newOwner);
     }
 }
