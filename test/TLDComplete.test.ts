@@ -49,22 +49,11 @@ describe("TLD Complete System Test", function () {
     //
     // Deploy Core
     //
-    const OrbitRegistryFactory = await ethers.getContractFactory(
-      "OrbitRegistry",
-      deployer
-    );
-    contracts.OrbitRegistry = (await OrbitRegistryFactory.deploy(
-      ethers.namehash("Orbit")
-    )) as OrbitRegistry;
 
     const OrbitRootFactory = await ethers.getContractFactory(
       "OrbitRoot",
       deployer
     );
-    contracts.orbitRoot = (await OrbitRootFactory.deploy(
-      await contracts.OrbitRegistry.getAddress(),
-      ethers.namehash("Orbit")
-    )) as OrbitRoot;
 
     const BlocklistFactory = await ethers.getContractFactory(
       "Blocklist",
@@ -317,7 +306,7 @@ describe("TLD Complete System Test", function () {
         )
       ).to.be.revertedWith("Not owner");
 
-      console.log("    ✅ Ownership check working");
+      console.log("✅ Ownership check working");
     });
   });
 

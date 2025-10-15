@@ -7,6 +7,9 @@ import "./OrbitRoot.sol";
 /**
  * The Orbit registry contract.
  */
+
+import "hardhat/console.sol";
+
 contract OrbitRegistry is Orbit {
     struct Record {
         address owner;
@@ -17,18 +20,39 @@ contract OrbitRegistry is Orbit {
     mapping(bytes32 => Record) records;
     mapping(address => mapping(address => bool)) operators;
 
+    address public orbitRoot;
+
+    event NewNodeCreated(bytes32 indexed node, address owner);
+
     // Permits modifications only by the owner of the specified node.
     modifier authorised(bytes32 node) {
         address _owner = records[node].owner;
-        require(_owner == msg.sender || operators[_owner][msg.sender]);
+        console.log("_owner", _owner);
+        require(
+            _owner == msg.sender || operators[_owner][msg.sender],
+            "Not authorized"
+        );
         _;
     }
 
     /**
      * @dev Constructs a new Orbit registry.
      */
-    constructor(bytes32 _node) {
-        records[_node].owner = msg.sender;
+    constructor() {
+        records[0x0].owner = msg.sender;
+        orbitRoot = msg.sender;
+    }
+
+    /**
+     * @dev Registers new node.
+     * @param node The node to register.
+     * @param _owner The address of the Registrar.
+     */
+    function registerNode(bytes32 node, address _owner) external {
+        require(msg.sender == address(orbitRoot), "Only Orbit");
+
+        records[node].owner = _owner;
+        emit NewNodeCreated(node, _owner);
     }
 
     /**
@@ -91,8 +115,12 @@ contract OrbitRegistry is Orbit {
         bytes32 label,
         address _owner
     ) public virtual override authorised(node) returns (bytes32) {
+        require(
+            records[node].owner != address(0),
+            "invalid domain for subdomain registration"
+        );
         bytes32 subnode = keccak256(abi.encodePacked(node, label));
-        _setOwner(subnode, _owner);
+        _setOwner(node, _owner);
         emit NewOwner(node, label, _owner);
         return subnode;
     }

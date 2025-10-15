@@ -53,8 +53,7 @@ contract TLDRegistrarFactory is OwnableUpgradeable, UUPSUpgradeable {
         require(registrars[tokenId] == address(0), "Already deployed");
 
         bytes32 label = keccak256(bytes(tldName));
-        bytes32 rootNode = bytes32(0);
-        bytes32 node = keccak256(abi.encodePacked(rootNode, label));
+        bytes32 node = keccak256(abi.encodePacked(orbitRoot.ROOT_NODE, label));
 
         TLDRegistrar registrar = new TLDRegistrar(
             orbit,
@@ -65,13 +64,13 @@ contract TLDRegistrarFactory is OwnableUpgradeable, UUPSUpgradeable {
         );
 
         // Register with OrbitRoot
-        orbitRoot.setSubnodeOwner(label, address(registrar));
+        console.log("Registring with OrbitRoot", address(registrar));
+        orbitRoot.registerNode(node, address(registrar));
 
         registrars[tokenId] = address(registrar);
         isRegistrar[address(registrar)] = true;
 
         emit RegistrarDeployed(tokenId, tldName, address(registrar), tldOwner);
-
         return address(registrar);
     }
 

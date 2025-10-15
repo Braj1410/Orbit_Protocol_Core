@@ -85,7 +85,9 @@ contract TLDFactory is
             msg.sender
         );
 
-        console.log(registrar);
+        TLDRegistrar _registrar = TLDRegistrar(registrar);
+
+        _registrar.setTLDTokenId(id);
         // Store in storage module
         storageModule.createTLD(
             id,

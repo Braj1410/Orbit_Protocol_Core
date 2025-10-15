@@ -67,20 +67,20 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
         );
         orbit = _orbit;
         baseNode = _baseNode;
-
         _tldfactory = tldfactory;
         _owner = owner;
         _registrarFactory = registrarFactory;
-        //controllers[owner] = true;
+        controllers[owner] = true;
     }
 
     modifier live() {
-        require(orbit.owner(baseNode) == address(this));
+        console.log(orbit.owner(baseNode), "Orbit Registry owner");
+        require(orbit.owner(baseNode) == address(this), "Not live");
         _;
     }
 
     modifier onlyController() {
-        require(controllers[_msgSender()]);
+        require(controllers[_msgSender()], "Only controller");
         _;
     }
 
@@ -199,11 +199,12 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
         address owner,
         uint duration,
         bool updateRegistry
-    ) internal live onlyController returns (uint) {
-        require(available(id));
+    ) internal live returns (uint) {
+        require(available(id), "ID not available");
         require(
             block.timestamp + duration + GRACE_PERIOD >
-                block.timestamp + GRACE_PERIOD
+                block.timestamp + GRACE_PERIOD,
+            "Too long"
         ); // Prevent future overflow
 
         expiries[id] = block.timestamp + duration;
@@ -212,6 +213,7 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
             _burn(id);
         }
         _mint(owner, id);
+
         if (updateRegistry) {
             orbit.setSubnodeOwner(baseNode, bytes32(id), owner);
         }
