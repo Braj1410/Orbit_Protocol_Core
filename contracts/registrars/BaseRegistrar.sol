@@ -4,7 +4,6 @@ pragma solidity >=0.8.4;
 import "../Orbit.sol";
 import "./IBaseRegistrar.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-
 import "../tld/structs.sol";
 import "hardhat/console.sol";
 
@@ -74,7 +73,6 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
     }
 
     modifier live() {
-        console.log(orbit.owner(baseNode), "Orbit Registry owner");
         require(orbit.owner(baseNode) == address(this), "Not live");
         _;
     }
@@ -90,8 +88,6 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
     }
 
     modifier onlyOwner() {
-        console.log(_tldfactory);
-        console.log(_msgSender());
         require(
             _msgSender() == _owner ||
                 _msgSender() == _tldfactory ||
@@ -156,7 +152,7 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
         uint256 id,
         address owner,
         uint duration
-    ) external override returns (uint) {
+    ) external override onlyController returns (uint) {
         return _register(id, owner, duration, true);
     }
 
@@ -170,7 +166,7 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
         uint256 id,
         address owner,
         uint duration
-    ) external override returns (uint) {
+    ) external override onlyController returns (uint) {
         return _register(id, owner, duration, false);
     }
 
@@ -188,7 +184,7 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
         uint duration,
         address resolver,
         uint64 ttl
-    ) external override returns (uint) {
+    ) external override onlyController returns (uint) {
         uint expires = _register(id, owner, duration, false);
         orbit.setSubnodeRecord(baseNode, bytes32(id), owner, resolver, ttl);
         return expires;
@@ -250,7 +246,7 @@ contract BaseRegistrar is ERC721Enumerable, IBaseRegistrar {
 
     function supportsInterface(
         bytes4 interfaceID
-    ) public pure override(ERC721Enumerable, IERC165) returns (bool) {
+    ) public pure override(ERC721Enumerable) returns (bool) {
         return
             interfaceID == type(IERC165).interfaceId ||
             interfaceID == type(IERC721).interfaceId ||

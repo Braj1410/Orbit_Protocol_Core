@@ -9,13 +9,13 @@ import {
   TLDRegistrarFactory,
   TLDFactory,
   TLDStorage__factory,
+  PublicResolver,
 } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { expect } from "chai";
-import { ZeroHash } from "ethers";
+import { expect, use } from "chai";
+import { namehash, ZeroHash } from "ethers";
 
 type Contracts = {
-  OrbitRegistry: OrbitRegistry;
   Blocklist: Blocklist;
   storage: TLDStorage;
   auction: TLDAuctionModule;
@@ -23,6 +23,7 @@ type Contracts = {
   registrarFactory: TLDRegistrarFactory;
   factory: TLDFactory;
   orbitRoot: OrbitRoot;
+  publicResolver: PublicResolver;
 };
 
 let contracts = {} as Contracts;
@@ -146,6 +147,18 @@ describe("TLD Subdomains", async function () {
       { initializer: "initialize", kind: "uups" }
     );
 
+    // //
+    // // Deploy Public Resolver
+    // //
+
+    const PublicResolverFactory = await ethers.getContractFactory(
+      "PublicResolver",
+      deployer
+    );
+    contracts.publicResolver = (await PublicResolverFactory.deploy(
+      await contracts.orbitRoot.orbit()
+    )) as PublicResolver;
+
     //
     // Configure Access
     //
@@ -179,6 +192,16 @@ describe("TLD Subdomains", async function () {
       registrarFactory: await contracts.registrarFactory.getAddress(),
       factory: await contracts.factory.getAddress(),
       orbitRoot: await contracts.orbitRoot.getAddress(),
+      publicResolver: await contracts.publicResolver.getAddress(),
+    });
+
+    console.log("Users", {
+      owner: owner.address,
+      user1: user1.address,
+      user2: user2.address,
+      treasury: treasury.address,
+      deployer: deployer.address,
+      controller: controller.address,
     });
   });
 
@@ -251,7 +274,36 @@ describe("TLD Subdomains", async function () {
       duration,
       { value: fees }
     );
+    console.log(
+      ethers.AbiCoder.defaultAbiCoder().decode(["bytes32"], tx2.data)
+    );
 
-    console.log(tx2);
+    console.log(await JugRegistrar.balanceOf(user2.address), "balance");
+    console.log(await JugRegistrar.tokenOfOwnerByIndex(user2.address, 0));
+    console.log(namehash("Miner.jug"));
+  });
+
+  it("should set resolver", async function () {
+    const tldData = await contracts.storage.getTLD(1);
+    const JugRegistrar = await ethers.getContractAt(
+      "TLDRegistrar",
+      tldData.registrar
+    );
+
+    console.log("Jug Registerar node", await JugRegistrar.baseNode());
+    console.log();
+
+    const resolverAddress = await contracts.publicResolver.getAddress();
+    await JugRegistrar.connect(user1).setResolver(resolverAddress);
+
+    const orbitRegistryAddress = await contracts.orbitRoot.getOrbitRegistry();
+    const OrbitRegistry = await ethers.getContractAt(
+      "OrbitRegistry",
+      orbitRegistryAddress
+    );
+
+    expect(
+      await OrbitRegistry.resolver(await JugRegistrar.baseNode())
+    ).to.be.equal(resolverAddress);
   });
 });

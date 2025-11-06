@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
-import "../Orbit.sol";
-import "./IBaseRegistrar.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-interface IBaseRegistrar is IERC721 {
+interface IBaseRegistrar {
     event ControllerAdded(address indexed controller);
     event ControllerRemoved(address indexed controller);
     event NameMigrated(
@@ -19,6 +17,8 @@ interface IBaseRegistrar is IERC721 {
         uint256 expires
     );
     event NameRenewed(uint256 indexed id, uint256 expires);
+
+    function baseNode() external view returns (bytes32);
 
     // Authorises a controller, who can register and renew domains.
     function addController(address controller) external;

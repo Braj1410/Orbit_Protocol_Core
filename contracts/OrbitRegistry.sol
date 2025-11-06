@@ -27,7 +27,6 @@ contract OrbitRegistry is Orbit {
     // Permits modifications only by the owner of the specified node.
     modifier authorised(bytes32 node) {
         address _owner = records[node].owner;
-        console.log("_owner", _owner);
         require(
             _owner == msg.sender || operators[_owner][msg.sender],
             "Not authorized"
@@ -120,7 +119,7 @@ contract OrbitRegistry is Orbit {
             "invalid domain for subdomain registration"
         );
         bytes32 subnode = keccak256(abi.encodePacked(node, label));
-        _setOwner(node, _owner);
+        _setOwner(subnode, _owner);
         emit NewOwner(node, label, _owner);
         return subnode;
     }

@@ -14,6 +14,7 @@ contract OrbitRoot is Ownable, Controllable {
     event TLDLocked(bytes32 indexed label);
 
     OrbitRegistry public orbit;
+
     mapping(bytes32 => bool) public locked;
 
     constructor() {
@@ -48,5 +49,9 @@ contract OrbitRoot is Ownable, Controllable {
         bytes4 interfaceID
     ) external pure returns (bool) {
         return interfaceID == INTERFACE_META_ID;
+    }
+
+    function getOrbitRegistry() external view returns (address) {
+        return address(orbit);
     }
 }

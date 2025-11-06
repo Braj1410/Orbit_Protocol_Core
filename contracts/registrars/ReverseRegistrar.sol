@@ -9,18 +9,19 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../utils/ControllableUpgradeable.sol";
 
-bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
-
-// namehash('addr.reverse')
-bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
-
 contract ReverseRegistrar is
-    Initializable,
     OwnableUpgradeable,
     ControllableUpgradeable,
     UUPSUpgradeable,
     IReverseRegistrar
 {
+    bytes32 constant lookup =
+        0x3031323334353637383961626364656600000000000000000000000000000000;
+
+    // namehash('addr.reverse')
+    bytes32 constant ADDR_REVERSE_NODE =
+        0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
+
     Orbit public orbit;
     IResolver public defaultResolver;
 
@@ -38,7 +39,7 @@ contract ReverseRegistrar is
             _orbit.owner(ADDR_REVERSE_NODE)
         );
         if (address(oldRegistrar) != address(0x0)) {
-            oldRegistrar.claim(msg.sender);
+            oldRegistrar.claim(_msgSender());
         }
     }
 
@@ -48,9 +49,9 @@ contract ReverseRegistrar is
 
     modifier authorised(address addr) {
         require(
-            addr == msg.sender ||
-                controllers[msg.sender] ||
-                orbit.isApprovedForAll(addr, msg.sender) ||
+            addr == _msgSender() ||
+                controllers[_msgSender()] ||
+                orbit.isApprovedForAll(addr, _msgSender()) ||
                 ownsContract(addr),
             "ReverseRegistrar: Caller is not a controller or authorised by address or the address itself"
         );
@@ -73,7 +74,7 @@ contract ReverseRegistrar is
      * @return The Orbit node hash of the reverse record.
      */
     function claim(address owner) public override returns (bytes32) {
-        return claimForAddr(msg.sender, owner, address(defaultResolver));
+        return claimForAddr(_msgSender(), owner, address(defaultResolver));
     }
 
     /**
@@ -114,7 +115,7 @@ contract ReverseRegistrar is
         address owner,
         address resolver
     ) public override returns (bytes32) {
-        return claimForAddr(msg.sender, owner, resolver);
+        return claimForAddr(_msgSender(), owner, resolver);
     }
 
     /**
@@ -127,8 +128,8 @@ contract ReverseRegistrar is
     function setName(string memory name) public override returns (bytes32) {
         return
             setNameForAddr(
-                msg.sender,
-                msg.sender,
+                _msgSender(),
+                _msgSender(),
                 address(defaultResolver),
                 name
             );
@@ -213,7 +214,7 @@ contract ReverseRegistrar is
 
     function ownsContract(address addr) internal view returns (bool) {
         try OwnableUpgradeable(addr).owner() returns (address owner) {
-            return owner == msg.sender;
+            return owner == _msgSender();
         } catch {
             return false;
         }

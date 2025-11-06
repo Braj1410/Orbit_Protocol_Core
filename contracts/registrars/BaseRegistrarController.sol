@@ -18,14 +18,21 @@ import "../utils/Address.sol";
 /**
  * @dev A base registrar controller for registering and renewing names with owner controls.
  */
-abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable, PausableUpgradeable, IBaseRegistrarController {
+import "hardhat/console.sol";
+
+abstract contract BaseRegistrarController is
+    UUPSUpgradeable,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    PausableUpgradeable,
+    IBaseRegistrarController
+{
     using StringUtils for *;
     using Address for address;
 
     uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
-    string private constant ORBIT_LABEL = "orbit";
-    bytes32 private constant ORBIT_NODE =
-        0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
+    string public ORBIT_LABEL;
+    bytes32 public BASE_NODE;
     uint256 public constant MIN_COMMITMENT_AGE = 300; // 5 minutes for better security
     uint256 public constant MAX_COMMITMENT_AGE = 24 * 60 * 60; // 24 hours
 
@@ -68,27 +75,37 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
     function initialize(
         IBaseRegistrar _registrar,
         IPriceOracle _priceOracle,
-        IReverseRegistrar _reverseRegistrar
+        IReverseRegistrar _reverseRegistrar,
+        bytes32 basenode,
+        string memory label
     ) public virtual initializer {
         __Ownable_init(msg.sender);
         __ReentrancyGuard_init();
         __Pausable_init();
-        require(address(_registrar) != address(0), "BaseRegistrarController: registrar cannot be zero");
-        require(address(_priceOracle) != address(0), "BaseRegistrarController: priceOracle cannot be zero");
-        require(address(_reverseRegistrar) != address(0), "BaseRegistrarController: reverseRegistrar cannot be zero");
+        require(
+            address(_registrar) != address(0),
+            "BaseRegistrarController: registrar cannot be zero"
+        );
+        require(
+            address(_priceOracle) != address(0),
+            "BaseRegistrarController: priceOracle cannot be zero"
+        );
+        require(
+            address(_reverseRegistrar) != address(0),
+            "BaseRegistrarController: reverseRegistrar cannot be zero"
+        );
         registrar = _registrar;
         priceOracle = _priceOracle;
         reverseRegistrar = _reverseRegistrar;
         chanceRequired = false;
+        BASE_NODE = basenode;
+        ORBIT_LABEL = label;
     }
 
-    function rentPrice(string memory name, uint256 duration)
-        public
-        view
-        virtual
-        override
-        returns (IPriceOracle.Price memory price)
-    {
+    function rentPrice(
+        string memory name,
+        uint256 duration
+    ) public view virtual override returns (IPriceOracle.Price memory price) {
         bytes32 label = keccak256(bytes(name));
         price = priceOracle.price(
             name,
@@ -97,19 +114,15 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
         );
     }
 
-    function valid(string memory name)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function valid(
+        string memory name
+    ) public view virtual override returns (bool) {
         if (strLength(name) < 3) {
             return false;
         }
 
         if (address(blocklist) != address(0)) {
-            if (blocklist.hasName(name, msg.sender)) {
+            if (blocklist.hasName(name, _msgSender())) {
                 return false;
             }
         }
@@ -117,13 +130,9 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
         return true;
     }
 
-    function available(string memory name)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function available(
+        string memory name
+    ) public view virtual override returns (bool) {
         bytes32 label = keccak256(bytes(name));
         return valid(name) && registrar.available(uint256(label));
     }
@@ -134,22 +143,17 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
      * @param duration How long to register for
      * @return The total price in CRO (wei)
      */
-    function getPrice(string memory name, uint256 duration) 
-        public 
-        view 
-        returns (uint256) 
-    {
+    function getPrice(
+        string memory name,
+        uint256 duration
+    ) public view returns (uint256) {
         IPriceOracle.Price memory price = rentPrice(name, duration);
         return price.base + price.premium;
     }
 
-    function strLength(string memory name)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function strLength(
+        string memory name
+    ) public view virtual override returns (uint256) {
         return name.strlen();
     }
 
@@ -169,6 +173,7 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
                 "BaseRegistrarController: resolver is required when data is supplied"
             );
         }
+
         return
             keccak256(
                 abi.encode(
@@ -184,7 +189,10 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
     }
 
     function commit(bytes32 commitment) public virtual override {
-        require(commitments[commitment] + MAX_COMMITMENT_AGE < block.timestamp, "BaseRegistrarController: invalid commitment");
+        require(
+            commitments[commitment] + MAX_COMMITMENT_AGE < block.timestamp,
+            "BaseRegistrarController: invalid commitment"
+        );
         commitments[commitment] = block.timestamp;
     }
 
@@ -203,10 +211,9 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
         emit BlocklistChanged(_blocklist);
     }
 
-    function setRevenueDistributor(address _revenueDistributor)
-        external
-        onlyOwner
-    {
+    function setRevenueDistributor(
+        address _revenueDistributor
+    ) external onlyOwner {
         revenueDistributor = IRevenueDistributor(_revenueDistributor);
         emit RevenueDistributorChanged(_revenueDistributor);
     }
@@ -228,12 +235,9 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
         return MAX_COMMITMENT_AGE;
     }
 
-    function supportsInterface(bytes4 interfaceID)
-        external
-        pure
-        virtual
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceID
+    ) external pure virtual returns (bool) {
         return
             interfaceID == type(IERC165).interfaceId ||
             interfaceID == type(IBaseRegistrarController).interfaceId;
@@ -265,7 +269,7 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
 
         if (chanceRequired && strLength(name) < 5) {
             if (address(blocklist) != address(0)) {
-                blocklist.checkChance(name, msg.sender);
+                blocklist.checkChance(name, _msgSender());
             }
         }
 
@@ -277,11 +281,11 @@ abstract contract BaseRegistrarController is Initializable, OwnableUpgradeable, 
     function _setReverseRecord(
         string memory name,
         address resolver,
-        address owner
+        address _owner
     ) internal {
         reverseRegistrar.setNameForAddr(
-            msg.sender,
-            owner,
+            _msgSender(),
+            _owner,
             resolver,
             string.concat(name, ".", ORBIT_LABEL)
         );

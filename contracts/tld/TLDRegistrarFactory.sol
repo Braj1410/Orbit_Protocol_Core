@@ -4,8 +4,12 @@ pragma solidity ^0.8.4;
 import "../Orbit.sol";
 import "../OrbitRoot.sol";
 import "./TLDRegistrar.sol";
+import "./ITLDFactory.sol";
+
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "../registrars/OrbitRegistrarController.sol";
+import "../reverse/IReverseAdapter.sol";
 
 /**
  * @title TLDRegistrarFactory
@@ -17,6 +21,8 @@ contract TLDRegistrarFactory is OwnableUpgradeable, UUPSUpgradeable {
     OrbitRoot public orbitRoot;
     address public tldFactory;
 
+    IReverseAdapter public reverseAdapter;
+
     mapping(uint256 => address) public registrars; // tokenId => proxy
     mapping(address => bool) public isRegistrar;
 
@@ -26,6 +32,8 @@ contract TLDRegistrarFactory is OwnableUpgradeable, UUPSUpgradeable {
         address proxy,
         address owner
     );
+
+    event ReverseAdapterChanged(address indexed adapter);
 
     modifier onlyFactory() {
         require(msg.sender == tldFactory, "Only factory");
@@ -42,6 +50,10 @@ contract TLDRegistrarFactory is OwnableUpgradeable, UUPSUpgradeable {
         tldFactory = _factory;
     }
 
+    function setReverseAdapter(address _adapter) external onlyOwner {
+        reverseAdapter = IReverseAdapter(_adapter);
+    }
+
     /**
      * @notice Deploy a new proxy for a TLD
      */
@@ -53,7 +65,8 @@ contract TLDRegistrarFactory is OwnableUpgradeable, UUPSUpgradeable {
         require(registrars[tokenId] == address(0), "Already deployed");
 
         bytes32 label = keccak256(bytes(tldName));
-        bytes32 node = keccak256(abi.encodePacked(orbitRoot.ROOT_NODE, label));
+        bytes32 zeroNode = bytes32(0);
+        bytes32 node = keccak256(abi.encodePacked(zeroNode, label));
 
         TLDRegistrar registrar = new TLDRegistrar(
             orbit,
@@ -63,8 +76,6 @@ contract TLDRegistrarFactory is OwnableUpgradeable, UUPSUpgradeable {
             tldOwner
         );
 
-        // Register with OrbitRoot
-        console.log("Registring with OrbitRoot", address(registrar));
         orbitRoot.registerNode(node, address(registrar));
 
         registrars[tokenId] = address(registrar);

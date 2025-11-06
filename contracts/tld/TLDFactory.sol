@@ -30,6 +30,10 @@ contract TLDFactory is
     TLDRevenueModule public revenueModule;
     TLDRegistrarFactory public registrarFactory;
 
+    address public ReverseResolver;
+    address public Resolver;
+    address public PriceOracle;
+
     uint256 public tldFee;
     uint256 public MIN_DURATION;
     uint256 public GRACE_PERIOD;
@@ -43,7 +47,10 @@ contract TLDFactory is
         address _storage,
         address _auction,
         address _revenue,
-        address _registrar
+        address _registrar,
+        address _resolver,
+        address _reverseResolver,
+        address _priceOracle
     ) public initializer {
         __ERC721_init("Orbit TLD", "TLD");
         __ERC721Enumerable_init();
@@ -53,6 +60,11 @@ contract TLDFactory is
         auctionModule = TLDAuctionModule(_auction);
         revenueModule = TLDRevenueModule(_revenue);
         registrarFactory = TLDRegistrarFactory(_registrar);
+
+        ReverseResolver = _reverseResolver;
+        Resolver = _resolver;
+        PriceOracle = _priceOracle;
+
         tldFee = 1 ether;
         MIN_DURATION = 365 days;
         GRACE_PERIOD = 30 days;
@@ -105,7 +117,6 @@ contract TLDFactory is
 
         _safeMint(msg.sender, id);
         emit TLDCreated(id, lower, msg.sender);
-        console.log("ID", id);
         return id;
     }
 

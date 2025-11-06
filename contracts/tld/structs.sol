@@ -3,6 +3,7 @@ struct TLD {
     bytes32 name;
     address owner;
     address registrar;
+    address registrarController;
     uint256 creationTime;
     uint256 registrationFee;
     uint256 totalRegistrations;

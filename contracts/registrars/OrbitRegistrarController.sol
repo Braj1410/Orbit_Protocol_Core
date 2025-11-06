@@ -12,22 +12,25 @@ import "../utils/Address.sol";
  */
 contract OrbitRegistrarController is
     BaseRegistrarController,
-    IOrbitRegistrarController,
-    UUPSUpgradeable
+    IOrbitRegistrarController
 {
     using Address for address;
 
     function initialize(
         IBaseRegistrar _registrar,
         IPriceOracle _priceOracle,
-        IReverseRegistrar _reverseRegistrar
+        IReverseRegistrar _reverseRegistrar,
+        bytes32 basenode,
+        string memory label
     ) public override initializer {
-        super.initialize(_registrar, _priceOracle, _reverseRegistrar);
+        super.initialize(
+            _registrar,
+            _priceOracle,
+            _reverseRegistrar,
+            basenode,
+            label
+        );
     }
-
-    function _authorizeUpgrade(
-        address newImplementation
-    ) internal override onlyOwner {}
 
     function register(
         string calldata name,
@@ -96,8 +99,7 @@ contract OrbitRegistrarController is
                 "OrbitRegistrarController: Resolver must be a contract"
             );
 
-            bytes32 ORBIT_NODE = 0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
-            bytes32 nodehash = keccak256(abi.encodePacked(ORBIT_NODE, label));
+            bytes32 nodehash = keccak256(abi.encodePacked(BASE_NODE, label));
             for (uint256 i = 0; i < data.length; i++) {
                 // Validate data length
                 require(
@@ -122,7 +124,7 @@ contract OrbitRegistrarController is
         }
 
         if (reverseRecord) {
-            _setReverseRecord(name, resolver, msg.sender);
+            _setReverseRecord(name, resolver, owner);
         }
 
         emit NameRegistered(
@@ -137,9 +139,9 @@ contract OrbitRegistrarController is
         _distributeRevenue(amount);
 
         if (msg.value > amount) {
-            (bool success, ) = payable(msg.sender).call{
+            (bool success, ) = payable(_msgSender()).call{
                 value: msg.value - amount
-            }("");
+            }("cancel");
             require(success, "OrbitRegistrarController: Refund failed");
         }
     }
@@ -225,4 +227,8 @@ contract OrbitRegistrarController is
 
         return string(lowerBytes);
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal virtual override {}
 }
